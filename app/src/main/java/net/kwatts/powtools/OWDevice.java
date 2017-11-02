@@ -22,10 +22,11 @@ import net.kwatts.powtools.model.DeviceStatus;
 
 
 public class OWDevice extends BaseObservable implements DeviceInterface {
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+
     private static final String TAG = "OWTOOLS";
     private static final String NAME = "ONEWHEEL";
-
-
 
     public final ObservableField<Boolean> isConnected = new ObservableField<>();
     public final ObservableField<Boolean> showDebugWindow = new ObservableField<>();
@@ -934,22 +935,21 @@ gatttool --device=D0:39:72:BE:0A:32 --char-write-req --value=7500 --handle=0x004
 
     @Override
     public String getCSVHeader() {
-        StringBuilder headers = new StringBuilder();
+        StringBuilder headers = new StringBuilder("time");
         for(OWDevice.DeviceCharacteristic dc : this.deviceNotifyCharacteristics) {
-            headers.append(',' + dc.key.get());
+            headers.append(',').append(dc.key.get());
         }
-        return "time" + headers.toString() + '\n';
+        return  headers.append('\n').toString();
     }
 
     @Override
     public String toCSV() {
-        String dateTimeString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(new Date());
-        String header = String.format(Locale.US, "%s", dateTimeString);
-        StringBuilder values = new StringBuilder();
+        String dateTimeString = simpleDateFormat.format(new Date());
+        StringBuilder values = new StringBuilder(dateTimeString);
         for(OWDevice.DeviceCharacteristic dc : this.deviceNotifyCharacteristics) {
-            values.append(',' + dc.value.get());
+            values.append(',').append(dc.value.get());
         }
-        return header + values.toString() + '\n';
+        return values.append('\n').toString();
     }
 
     public String toString() {
