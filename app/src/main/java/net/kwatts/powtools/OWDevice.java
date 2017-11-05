@@ -78,6 +78,11 @@ public class OWDevice extends BaseObservable implements DeviceInterface {
     public static final String OnewheelCharacteristicUNKNOWN2 = "e659f31e-ea98-11e3-ac10-0800200c9a66";
     public static final String OnewheelCharacteristicUNKNOWN3 = "e659f31f-ea98-11e3-ac10-0800200c9a66";
     public static final String OnewheelCharacteristicUNKNOWN4 = "e659f320-ea98-11e3-ac10-0800200c9a66";
+    private String location;
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 /*
 0x0045 = e659f30c-ea98-11e3-ac10-0800200c9a66
 0x0049 = e659f30d-ea98-11e3-ac10-0800200c9a66
@@ -947,7 +952,11 @@ gatttool --device=D0:39:72:BE:0A:32 --char-write-req --value=7500 --handle=0x004
         String header = String.format(Locale.US, "%s", dateTimeString);
         StringBuilder values = new StringBuilder();
         for(OWDevice.DeviceCharacteristic dc : this.deviceNotifyCharacteristics) {
-            values.append(',' + dc.value.get());
+            values.append(',').append(dc.value.get());
+        }
+
+        if (location != null) {
+            values.append(",LOC=(").append(location).append(")");
         }
         return header + values.toString() + '\n';
     }
